@@ -3,8 +3,8 @@ export interface Establishment {
   id: string;
   name: string;
   category: string;
-  logo?: string;
-  createdAt: Date;
+  logo_url: string | File;
+  createdAt?: Date;
 }
 
 export interface Voucher {

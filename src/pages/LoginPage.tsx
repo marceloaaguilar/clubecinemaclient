@@ -8,13 +8,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, verifyToken } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,19 +27,26 @@ const LoginPage = () => {
       return;
     }
 
-    const success = await login(email, password);
-    if (!success) {
-      setError('Email ou senha incorretos');
+    const responseLogin = await login(email, password);
+
+    if (!responseLogin.success) {
+      setError(responseLogin.error);
+
       toast({
-        title: "Erro no login",
-        description: "Credenciais inválidas. Tente: admin@sistema.com / admin123",
+        title: "Ocorreu um erro",
+        description: responseLogin.error,
         variant: "destructive",
       });
+
     } else {
+      
+      verifyToken();
+
       toast({
         title: "Login realizado",
-        description: "Bem-vindo ao sistema de vouchers!",
+        description: "Bem-vindo ao Clube Cinema!",
       });
+
     }
   };
 
@@ -50,7 +59,7 @@ const LoginPage = () => {
               <LogIn className="h-6 w-6 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Sistema de Vouchers</CardTitle>
+          <CardTitle className="text-2xl text-center">Clube Cinema</CardTitle>
           <CardDescription className="text-center">
             Faça login para acessar o painel administrativo
           </CardDescription>
@@ -83,11 +92,6 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-            </div>
-            <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md">
-              <strong>Credenciais de teste:</strong><br />
-              Email: admin@sistema.com<br />
-              Senha: admin123
             </div>
           </CardContent>
           <CardFooter>

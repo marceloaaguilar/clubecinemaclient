@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginPage from '@/pages/LoginPage';
+import { useNavigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
